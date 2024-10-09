@@ -1,0 +1,60 @@
+service: user-api
+frameworkVersion: '4'
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-1
+  environment:
+    MYSQL_DB: ${env:MYSQL_DB}
+    MYSQL_USER: ${env:MYSQL_USER}
+    MYSQL_PASSWORD: ${env:MYSQL_PASSWORD}
+    MYSQL_HOST: ${env:MYSQL_HOST}
+  
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "rds:DescribeDBInstances"
+        - "rds:Connect"
+      Resource: "*"
+
+functions:
+  createUser:
+    handler: handler.createUser
+    events:
+      - http:
+          path: users
+          method: post
+          cors: true
+
+  getUser:
+    handler: handler.getUser
+    events:
+      - http:
+          path: users/{id}
+          method: get
+          cors: true
+
+  updateUser:
+    handler: handler.updateUser
+    events:
+      - http:
+          path: users/{id}
+          method: put
+          cors: true
+
+  deleteUser:
+    handler: handler.deleteUser
+    events:
+      - http:
+          path: users/{id}
+          method: delete
+          cors: true
+
+  getAllUsers:
+    handler: handler.getAllUsers
+    events:
+      - http:
+          path: users
+          method: get
+          cors: true
